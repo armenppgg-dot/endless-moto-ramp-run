@@ -2,15 +2,19 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Endless Moto Ramp Run</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="game-shell">
       <h1>Endless Moto Ramp Run</h1>
-      <p class="hint">Управление: ↑ / W / Пробел — сменить полосу. R — рестарт.</p>
-      <canvas id="game" width="960" height="540" aria-label="Игра с мотоциклом и трамплинами"></canvas>
+      <p class="hint">Управление: ← / → / A / D — смена полосы. R — рестарт.</p>
+      <canvas id="game" width="540" height="960" aria-label="Игра с мотоциклом и трамплинами"></canvas>
+      <div class="touch-controls" aria-label="Мобильное управление">
+        <button id="btn-left" type="button" aria-label="Влево">◀</button>
+        <button id="btn-right" type="button" aria-label="Вправо">▶</button>
+      </div>
     </main>
 
     <script src="script.js"></script>

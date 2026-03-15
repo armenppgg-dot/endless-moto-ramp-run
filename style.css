@@ -12,36 +12,86 @@
 body {
   margin: 0;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+  min-height: 100dvh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: radial-gradient(circle at top, #f7fbff, var(--bg));
   color: var(--ink);
 }
 
 .game-shell {
-  width: min(980px, 96vw);
+  width: min(100vw, 520px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
   background: color-mix(in srgb, var(--surface) 88%, #dbe9ff);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: 0 18px 45px rgba(44, 53, 80, 0.14);
+  border-radius: 0;
+  padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(1.2rem, 2.6vw, 1.8rem);
+  font-size: clamp(1.05rem, 5vw, 1.4rem);
+  line-height: 1.1;
 }
 
 .hint {
-  margin: 10px 0 14px;
+  margin: 0;
   color: #55607c;
+  font-size: clamp(0.8rem, 3.4vw, 0.95rem);
 }
 
 #game {
   width: 100%;
-  height: auto;
+  flex: 1;
+  min-height: 0;
   border-radius: 12px;
   border: 1px solid #d6e2f7;
   background: linear-gradient(#cce6ff 0 54%, #95c5f3 54% 100%);
   display: block;
+  touch-action: none;
+}
+
+.touch-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.touch-controls button {
+  height: clamp(68px, 12vh, 92px);
+  border: none;
+  border-radius: 16px;
+  background: rgba(108, 125, 242, 0.92);
+  color: #fff;
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 10px 22px rgba(44, 53, 80, 0.2);
+}
+
+.touch-controls button:active {
+  transform: translateY(1px);
+  background: rgba(88, 104, 222, 0.96);
+}
+
+@media (min-width: 700px) {
+  .game-shell {
+    width: min(100vw, 760px);
+    border-radius: 18px;
+    box-shadow: 0 18px 45px rgba(44, 53, 80, 0.14);
+    margin: 12px auto;
+    min-height: calc(100vh - 24px);
+    min-height: calc(100dvh - 24px);
+    padding: 14px;
+  }
+
+  .touch-controls {
+    max-width: 480px;
+    width: 100%;
+    align-self: center;
+  }
 }
