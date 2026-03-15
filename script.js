@@ -62,8 +62,10 @@ async function ensureAudioStarted() {
     if (audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
+    return audioCtx.state === "running";
   } catch {
     // silent fallback for environments where audio is blocked
+    return false;
   }
 }
 
@@ -79,7 +81,7 @@ function setEngineSound(active) {
 
 function playTone(freq = 350, duration = 0.07, type = "sine", gainValue = 0.05) {
   try {
-    ensureAudioStarted();
+    if (!audioCtx || audioCtx.state !== "running") return;
     const now = audioCtx.currentTime;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -99,8 +101,8 @@ function playTone(freq = 350, duration = 0.07, type = "sine", gainValue = 0.05) 
 function resizeGame() {
   const rect = canvas.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const nextWidth = Math.max(360, Math.round(rect.width * dpr));
-  const nextHeight = Math.max(560, Math.round(rect.height * dpr));
+  const nextWidth = Math.max(1, Math.round(rect.width * dpr));
+  const nextHeight = Math.max(1, Math.round(rect.height * dpr));
 
   canvas.width = nextWidth;
   canvas.height = nextHeight;
@@ -132,6 +134,18 @@ async function changeLane(direction) {
   bike.targetY = GAME.laneY[bike.lane];
   playTone(520, 0.05, "triangle", 0.02);
 }
+
+
+function bindAudioUnlock() {
+  const unlock = async () => {
+    await ensureAudioStarted();
+  };
+
+  window.addEventListener("pointerdown", unlock, { passive: true, once: true });
+  window.addEventListener("touchstart", unlock, { passive: true, once: true });
+}
+
+bindAudioUnlock();
 
 window.addEventListener("keydown", (event) => {
   if (["ArrowLeft", "a", "A"].includes(event.key)) {
