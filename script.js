@@ -56,11 +56,11 @@ function initAudio() {
   }
 }
 
-function ensureAudioStarted() {
+async function ensureAudioStarted() {
   try {
     initAudio();
     if (audioCtx.state === "suspended") {
-      audioCtx.resume();
+      await audioCtx.resume();
     }
   } catch {
     // silent fallback for environments where audio is blocked
@@ -124,9 +124,9 @@ function resizeGame() {
   }));
 }
 
-function changeLane(direction) {
+async function changeLane(direction) {
   if (GAME.gameOver) return;
-  ensureAudioStarted();
+  await ensureAudioStarted();
   GAME.started = true;
   bike.lane = direction < 0 ? 0 : 1;
   bike.targetY = GAME.laneY[bike.lane];
@@ -149,15 +149,29 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+function handleControlPress(event, direction) {
+  event.preventDefault();
+  if (GAME.gameOver) {
+    resetGame();
+    return;
+  }
+  changeLane(direction);
+}
+
 function bindTouchButton(button, direction) {
-  button.addEventListener("pointerdown", (event) => {
-    event.preventDefault();
-    if (GAME.gameOver) {
-      resetGame();
-      return;
-    }
-    changeLane(direction);
-  });
+  const onPress = (event) => handleControlPress(event, direction);
+
+  if (window.PointerEvent) {
+    button.addEventListener("pointerdown", onPress, { passive: false });
+    button.addEventListener("pointerup", (event) => event.preventDefault(), { passive: false });
+    button.addEventListener("pointercancel", (event) => event.preventDefault(), { passive: false });
+    return;
+  }
+
+  button.addEventListener("touchstart", onPress, { passive: false });
+  button.addEventListener("touchend", (event) => event.preventDefault(), { passive: false });
+  button.addEventListener("touchcancel", (event) => event.preventDefault(), { passive: false });
+  button.addEventListener("mousedown", onPress);
 }
 
 bindTouchButton(leftBtn, -1);
@@ -379,6 +393,15 @@ function frame() {
   render();
   requestAnimationFrame(frame);
 }
+
+
+window.addEventListener("gesturestart", (event) => {
+  event.preventDefault();
+});
+
+window.addEventListener("touchmove", (event) => {
+  event.preventDefault();
+}, { passive: false });
 
 window.addEventListener("resize", resizeGame);
 resizeGame();
